@@ -36,6 +36,9 @@ function UpdateUser() {
     if (!name) {
       toast.error("Name is required.");
       return false;
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      toast.error("Name can only contain letters (A-Z, a-z).");
+      return false;
     }
     if (!email) {
       toast.error("Email is required.");
@@ -60,7 +63,6 @@ function UpdateUser() {
     if (!isValid) {
       return; 
     }
-
     const updatedUser = { name, email, age };
 
     try {
@@ -76,64 +78,57 @@ function UpdateUser() {
 
   return (
     <div className="d-flex vh-100 justify-content-center align-items-center">
-      <div className="w-50 bg-white rounded shadow p-5">
-        <form onSubmit={handleUpdate}>
-          <h2 className="text-center mb-4">Update User</h2>
-          <div className="mb-3">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              className="form-control"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              placeholder="Enter Email"
-              className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="age">Age</label>
-            <input
-              type="text"
-              placeholder="Enter Age"
-              className="form-control"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            onClick={() => setShowModal(true)}
-          >
-            Update User
-          </button>
-        </form>
-      </div>
+      <Button onClick={() => setShowModal(true)} className="btn btn-primary">
+        Update User
+      </Button>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Update</Modal.Title>
+          <Modal.Title>Update User</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to update this user?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleUpdate}>Update</Button>
-        </Modal.Footer>
+        <Modal.Body>
+          <form onSubmit={handleUpdate}>
+            <div className="mb-3">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                placeholder="Enter Name"
+                className="form-control"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                placeholder="Enter Email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="age">Age</label>
+              <input
+                type="text"
+                placeholder="Enter Age"
+                className="form-control"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                required
+              />
+            </div>
+
+            <Button type="submit" className="btn btn-primary w-100">
+              Update User
+            </Button>
+          </form>
+        </Modal.Body>
       </Modal>
     </div>
   );
