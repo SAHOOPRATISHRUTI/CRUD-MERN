@@ -21,6 +21,6 @@ Express.js: To handle API requests and routing.
 MongoDB: For storing user data in a NoSQL database.
 Setup Instructions
 
-Prerequisites
-Node.js and npm installed on your machine.
-A working API backend to handle user data (make sure to implement the necessary endpoints).
+------------Prerequisites---------------
+1.Node.js and npm installed on your machine.
+2.A working API backend to handle user data (make sure to implement the necessary endpoints).
