@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
-import { toast } from 'react-toastify';
-import { getUsers, updateUser } from '../utils/api'; 
+import { toast } from "react-toastify";
+import { getUsers, updateUser } from "../utils/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./UpdateUser.css";
 
@@ -18,7 +18,7 @@ function UpdateUser() {
     const fetchUser = async () => {
       try {
         const result = await getUsers();
-        const user = result.find(user => user._id === id); 
+        const user = result.find((user) => user._id === id);
         if (user) {
           setName(user.name);
           setEmail(user.email);
@@ -61,12 +61,12 @@ function UpdateUser() {
     e.preventDefault();
     const isValid = validate();
     if (!isValid) {
-      return; 
+      return;
     }
     const updatedUser = { name, email, age };
 
     try {
-      await updateUser(id, updatedUser); 
+      await updateUser(id, updatedUser);
       toast.success("User updated successfully!");
       setShowModal(false);
       navigate("/");

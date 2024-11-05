@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./CreateUser.css";
-import { createUser } from '../utils/api';
+import { createUser } from "../utils/api";
 
 function CreateUser() {
   const [showModal, setShowModal] = useState(false);
@@ -49,7 +49,7 @@ function CreateUser() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
 
-      Object.values(newErrors).forEach(error => {
+      Object.values(newErrors).forEach((error) => {
         toast.error(error);
       });
       return;
@@ -61,7 +61,7 @@ function CreateUser() {
       await createUser(newUser);
       toast.success("User created successfully!");
       setShowModal(false);
-     
+
       setName("");
       setEmail("");
       setAge("");
@@ -78,7 +78,6 @@ function CreateUser() {
       </Button>
 
       <Modal show={showModal} onHide={handleCloseModal}>
-      
         <Modal.Body>
           <form onSubmit={handleCreate}>
             <div className="mb-3">

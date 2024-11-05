@@ -8,10 +8,10 @@ import { getUsers, deleteUser, createUser, updateUser } from '../utils/api';
 function User() {
   const [users, setUsers] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false); // State for update modal
+  const [showUpdateModal, setShowUpdateModal] = useState(false); 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-  const [userToUpdate, setUserToUpdate] = useState(null); // State for the user to update
+  const [userToUpdate, setUserToUpdate] = useState(null); 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
@@ -40,11 +40,11 @@ function User() {
   };
 
   const handleShowUpdateModal = (user) => {
-    setUserToUpdate(user); // Set the user to update
+    setUserToUpdate(user); 
     setName(user.name);
     setEmail(user.email);
     setAge(user.age);
-    setShowUpdateModal(true); // Show update modal
+    setShowUpdateModal(true); 
   };
 
   const handleCloseUpdateModal = () => {
@@ -222,7 +222,7 @@ function User() {
                 }}
                 required
               />
-              {errors.name && <div className="text-danger">{errors.name}</div>}
+              {/* {errors.name && <div className="text-danger">{errors.name}</div>} */}
             </div>
 
             <div className="mb-3">
@@ -238,7 +238,7 @@ function User() {
                 }}
                 required
               />
-              {errors.email && <div className="text-danger">{errors.email}</div>}
+              {/* {errors.email && <div className="text-danger">{errors.email}</div>} */}
             </div>
 
             <div className="mb-3">
@@ -254,7 +254,7 @@ function User() {
                 }}
                 required
               />
-              {errors.age && <div className="text-danger">{errors.age}</div>}
+              {/* {errors.age && <div className="text-danger">{errors.age}</div>} */}
             </div>
 
             <Button variant="primary" type="submit">
