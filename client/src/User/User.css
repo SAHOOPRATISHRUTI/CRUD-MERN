@@ -28,3 +28,61 @@ body {
     color: #fff; 
   }
   
+  /* Container for pagination */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/* Pagination buttons styling */
+.pagination-btn {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+/* Hover effect */
+.pagination-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Disabled button styling */
+.pagination-btn:disabled {
+  background-color: #d6d6d6;
+  border-color: #d6d6d6;
+  cursor: not-allowed;
+}
+
+/* Pagination info text */
+.pagination-info {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Optional: Add spacing between buttons and info */
+.pagination-container > button + .pagination-info {
+  margin: 0 10px;
+}
+.search-container {
+  position: fixed;
+  top: 120px; /* Adjust the distance from the top */
+  right: 200px; /* Align to the right */
+  width: 250px; /* Set a fixed width */
+}
+
+.search-box {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 20px; /* For rounded corners */
+  border: 1px solid #ccc;
+}
+

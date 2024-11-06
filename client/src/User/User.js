@@ -1,34 +1,95 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./User.css"; 
-import { getUsers, deleteUser, createUser, updateUser } from '../utils/api'; 
+import "./User.css";
+import { deleteUser, createUser, updateUser } from "../utils/api";
+import axios from "axios";
 
 function User() {
   const [users, setUsers] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false); 
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-  const [userToUpdate, setUserToUpdate] = useState(null); 
+  const [userToUpdate, setUserToUpdate] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
+
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const loadUsers = async () => {
-      const result = await getUsers();
-      if (result.success && Array.isArray(result.data)) {
-        setUsers(result.data);
-      } else {
-        console.log("Unexpected data structure", result);
-      }
-    };
+  const [loading, setLoading] = useState(true);
 
-    loadUsers();
-  }, []);
+  const [searchKey, setSearchKey] = useState("");
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 5,
+    limit: 4,
+  });
+
+  const API_URL = "http://localhost:4002/api/users";
+
+  // Fetch users from the API
+  const getUsers = async () => {
+    setLoading(true); // Start loading
+    try {
+      const response = await axios.get(API_URL, {
+        params: {
+          searchKey: searchKey,
+          page: pagination.currentPage,
+          limit: pagination.limit,
+        },
+      });
+
+      const fetchedUsers = Array.isArray(response.data.data.users)
+        ? response.data.data.users
+        : [];
+      setUsers(fetchedUsers);
+
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        totalPages: response.data.data.totalPages,
+      }));
+      console.log(response.data.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Error fetching users!");
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
+
+  const handleReset = () => {
+    setName("");
+    setEmail("");
+    setAge("");
+    setErrors({}); // Optional: Clear any validation errors
+  };
+
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchKey(e.target.value);
+    setPagination({ ...pagination, currentPage: 1 }); // Reset to first page when search changes
+  };
+
+  // Handle pagination change
+  const handlePaginationChange = (direction) => {
+    const newPage =
+      direction === "next"
+        ? pagination.currentPage + 1
+        : pagination.currentPage - 1;
+
+    if (newPage > 0 && newPage <= pagination.totalPages) {
+      setPagination({ ...pagination, currentPage: newPage });
+    }
+  };
+
+  // Fetch users whenever searchKey or pagination changes
+  useEffect(() => {
+    getUsers();
+  }, [searchKey, pagination.currentPage]);
 
   const handleShowAddUserModal = () => {
     setShowAddUserModal(true);
@@ -40,11 +101,11 @@ function User() {
   };
 
   const handleShowUpdateModal = (user) => {
-    setUserToUpdate(user); 
+    setUserToUpdate(user);
     setName(user.name);
     setEmail(user.email);
     setAge(user.age);
-    setShowUpdateModal(true); 
+    setShowUpdateModal(true);
   };
 
   const handleCloseUpdateModal = () => {
@@ -67,7 +128,7 @@ function User() {
     if (userToDelete) {
       try {
         await deleteUser(userToDelete);
-        setUsers(users.filter(user => user._id !== userToDelete));
+        setUsers(users.filter((user) => user._id !== userToDelete));
         toast.success("User deleted successfully!");
         handleCloseDeleteModal();
       } catch (error) {
@@ -99,40 +160,41 @@ function User() {
     return newErrors;
   };
 
+
   const handleCreate = async (e) => {
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      Object.values(newErrors).forEach(error => {
+      Object.values(newErrors).forEach((error) => {
         toast.error(error);
       });
       return;
     }
-
     const newUser = { name, email, age };
-
     try {
-      const result = await createUser(newUser);
-      if (result.success) {
-        setUsers([...users, result.data]); 
-        toast.success("User created successfully!");
-        handleCloseAddUserModal();
+      const response = await createUser(newUser);
+      console.log(response);
+
+      if (response.success) {
+        toast.success(response.message);
+        console.log("ggg", response.message);
       } else {
-        toast.error("Error creating user!");
+        toast.error(response.data);
       }
     } catch (error) {
-      console.error("Error creating user:", error);
-      toast.error("Error creating user!");
+      toast.error(error.response.data.message);
+      console.error("hyy", error.response.data.message);
     }
   };
+
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      Object.values(newErrors).forEach(error => {
+      Object.values(newErrors).forEach((error) => {
         toast.error(error);
       });
       return;
@@ -143,8 +205,12 @@ function User() {
     try {
       const result = await updateUser(userToUpdate._id, updatedUser);
       if (result.success) {
-        setUsers(users.map(user => (user._id === userToUpdate._id ? result.data : user)));
-        toast.success("User updated successfully!");
+        setUsers(
+          users.map((user) =>
+            user._id === userToUpdate._id ? result.data : user
+          )
+        );
+        toast.success(result.message);
         handleCloseUpdateModal();
       } else {
         toast.error("Error updating user!");
@@ -166,9 +232,25 @@ function User() {
     <div className="d-flex vh-100 justify-content-center align-items-center">
       <div className="w-75 bg-white rounded shadow p-4">
         <h2 className="text-center mb-4">User Management</h2>
-        <Button variant="success" className="mb-3" onClick={handleShowAddUserModal}>
+
+        <div className="search-container ">
+          <input
+            type="text"
+            className="form-control search-box"
+            placeholder="Search users by name or email"
+            value={searchKey}
+            onChange={handleSearchChange}
+          />
+        </div>
+
+        <Button
+          variant="success"
+          className="mb-3"
+          onClick={handleShowAddUserModal}
+        >
           Add User +
         </Button>
+
         <table className="table table-striped table-bordered table-hover">
           <thead className="table-dark">
             <tr>
@@ -186,20 +268,54 @@ function User() {
                   <td>{user.email}</td>
                   <td>{user.age}</td>
                   <td>
-                    <button className="btn btn-warning" onClick={() => handleShowUpdateModal(user)}>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => handleShowUpdateModal(user)}
+                    >
                       Update
                     </button>
-                    <button className="btn btn-danger" onClick={() => handleShowDeleteModal(user._id)}>Delete</button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleShowDeleteModal(user._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center">No users found</td>
+                <td colSpan="4" className="text-center">
+                  No users found
+                </td>
               </tr>
             )}
           </tbody>
         </table>
+
+        <div className="pagination-container">
+          <button
+            className="pagination-btn prev-btn"
+            onClick={() => handlePaginationChange("prev")}
+            disabled={pagination.currentPage === 1}
+          >
+            Previous
+          </button>
+
+          {users.length > 0 && (
+            <span className="pagination-info">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </span>
+          )}
+
+          <button
+            className="pagination-btn next-btn"
+            onClick={() => handlePaginationChange("next")}
+            disabled={pagination.currentPage === pagination.totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {/* Add User Modal */}
@@ -222,7 +338,7 @@ function User() {
                 }}
                 required
               />
-              {/* {errors.name && <div className="text-danger">{errors.name}</div>} */}
+              {errors.name && <div className="text-danger">{errors.name}</div>}
             </div>
 
             <div className="mb-3">
@@ -238,7 +354,7 @@ function User() {
                 }}
                 required
               />
-              {/* {errors.email && <div className="text-danger">{errors.email}</div>} */}
+              {errors.email && <div className="text-danger">{errors.email}</div>}
             </div>
 
             <div className="mb-3">
@@ -254,7 +370,7 @@ function User() {
                 }}
                 required
               />
-              {/* {errors.age && <div className="text-danger">{errors.age}</div>} */}
+              {errors.age && <div className="text-danger">{errors.age}</div>}
             </div>
 
             <Button variant="primary" type="submit">
@@ -319,20 +435,27 @@ function User() {
               {errors.age && <div className="text-danger">{errors.age}</div>}
             </div>
 
-            <Button variant="primary" type="submit">
-              Update User
-            </Button>
+            <div className="d-flex justify-content-between">
+              <Button variant="secondary" type="button" onClick={handleReset}>
+                Reset
+              </Button>
+              <Button variant="primary" type="submit">
+                Update User
+              </Button>
+            </div>
           </form>
         </Modal.Body>
       </Modal>
 
+
+
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Delete User</Modal.Title>
+          <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this user?
+          <p>Are you sure you want to delete this user?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseDeleteModal}>
