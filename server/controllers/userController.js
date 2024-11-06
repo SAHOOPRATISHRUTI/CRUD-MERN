@@ -7,35 +7,43 @@ const createUser = async (req, res) => {
     try {
         const userData = req.body;
 
-  
         const { isValid, message } = validateUserData(userData);
         if (!isValid) {
-            
             return Response.failResponse(req, res, message, messages.validationError, 400);
         }
-
-       
         const user = await userService.createUser(userData);
         return Response.successResponse(req, res, user, messages.userCreated, 201);
     } catch (error) {
         console.error(error);
+
+        if (error.message) {
+            return Response.failResponse(req, res, error.message, messages.duplicateEmail, 400);
+        }
+
         return Response.errorResponse(req, res, {
             message: messages.internalServerError,
         });
     }
 };
 
+
 const getAllUsers = async (req, res) => {
     try {
-        const users = await userService.getAllUsers();
+        
+        const users = await userService.getUsers(req.query);
+
+        
         return Response.successResponse(req, res, users, messages.retrivedata, 200);
     } catch (error) {
         console.error(error);
+
+       
         return Response.errorResponse(req, res, {
             message: messages.internalServerError,
         });
     }
 };
+
 
 
 const updateUser = async (req, res) => {

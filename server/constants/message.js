@@ -8,6 +8,7 @@ const emailRequired = "Email address is required.";
 const ageRequired = "Age is required.";
 const internalServerError = "An unexpected error occurred.";
 const retrivedata = "Users retrieved successfully"
+const duplicateEmail="Email is already Used"
 
 module.exports = {
     userCreated,
@@ -19,5 +20,6 @@ module.exports = {
     emailRequired,
     ageRequired,
     internalServerError,
-    retrivedata
+    retrivedata,
+    duplicateEmail
 };
