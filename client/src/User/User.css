@@ -31,10 +31,11 @@ body {
   /* Container for pagination */
 .pagination-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 20px;
   padding: 10px 20px;
+  gap: 10px;
 }
 
 /* Pagination buttons styling */
@@ -65,8 +66,15 @@ body {
 /* Pagination info text */
 .pagination-info {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  color: #9b1313; /* Dark gray for a clean look */
+  background-color: #f8f9fa; /* Light gray background */
+  border: 1px solid #ddd; /* Subtle border to frame the text */
+  padding: 6px 12px; /* Add padding for a balanced appearance */
+  border-radius: 4px; /* Rounded corners for a softer look */
+  display: inline-block; /* Makes the span respect padding */
 }
+
 
 /* Optional: Add spacing between buttons and info */
 .pagination-container > button + .pagination-info {
@@ -85,4 +93,3 @@ body {
   border-radius: 20px; /* For rounded corners */
   border: 1px solid #ccc;
 }
-

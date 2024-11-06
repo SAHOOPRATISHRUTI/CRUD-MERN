@@ -10,6 +10,7 @@ function User() {
   const [users, setUsers] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [userToUpdate, setUserToUpdate] = useState(null);
@@ -30,7 +31,7 @@ function User() {
 
   const API_URL = "http://localhost:4002/api/users";
 
-  // Fetch users from the API
+  // FETCH USERS FROM API
   const getUsers = async () => {
     setLoading(true); // Start loading
     try {
@@ -67,7 +68,6 @@ function User() {
     setErrors({}); // Optional: Clear any validation errors
   };
 
-
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearchKey(e.target.value);
@@ -100,30 +100,32 @@ function User() {
     resetForm();
   };
 
+  // FOR SHOW UPDATE MODAL
   const handleShowUpdateModal = (user) => {
     setUserToUpdate(user);
-    setName(user.name);
+    setName(user.name); //TO SET PREV DATA IN THE INPUT BOX
     setEmail(user.email);
     setAge(user.age);
     setShowUpdateModal(true);
   };
-
+// FOR CLOSE UPDATE MODAL
   const handleCloseUpdateModal = () => {
     setShowUpdateModal(false);
     setUserToUpdate(null);
     resetForm();
   };
-
+// FOR SHOW DELETE MODAL
   const handleShowDeleteModal = (userId) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
   };
-
+// FOR CLOSE DELETE MODAL
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(false);
     setUserToDelete(null);
   };
 
+// FOR CONFIRM DELETE MODAL
   const handleConfirmDelete = async () => {
     if (userToDelete) {
       try {
@@ -137,7 +139,7 @@ function User() {
       }
     }
   };
-
+//  FORM VALIDATION
   const validate = () => {
     const newErrors = {};
     if (!name) {
@@ -160,10 +162,12 @@ function User() {
     return newErrors;
   };
 
-
+  //CREATE USER
   const handleCreate = async (e) => {
     e.preventDefault();
-    const newErrors = validate();
+
+    const newErrors = validate(); //VALIDATE FORM
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       Object.values(newErrors).forEach((error) => {
@@ -186,11 +190,13 @@ function User() {
       toast.error(error.response.data.message);
       console.error("hyy", error.response.data.message);
     }
+    handleCloseAddUserModal();
   };
 
-
+ //UPDATE USER
   const handleUpdate = async (e) => {
     e.preventDefault();
+
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -221,6 +227,7 @@ function User() {
     }
   };
 
+//RESET FORM
   const resetForm = () => {
     setName("");
     setEmail("");
@@ -228,11 +235,14 @@ function User() {
     setErrors({});
   };
 
+
+
   return (
     <div className="d-flex vh-100 justify-content-center align-items-center">
       <div className="w-75 bg-white rounded shadow p-4">
         <h2 className="text-center mb-4">User Management</h2>
 
+        {/* SEARCH CONTAINER */}
         <div className="search-container ">
           <input
             type="text"
@@ -243,13 +253,23 @@ function User() {
           />
         </div>
 
+        {/* SHOWING WHICH PAGES  */}
+        {users.length > 0 && (
+          <span className="pagination-info">
+            Showing Page {pagination.currentPage} of {pagination.totalPages}{" "}
+            entities.
+          </span>
+        )}
+
         <Button
           variant="success"
-          className="mb-3"
+          className="mb-2"
           onClick={handleShowAddUserModal}
         >
           Add User +
         </Button>
+
+       
 
         <table className="table table-striped table-bordered table-hover">
           <thead className="table-dark">
@@ -302,12 +322,6 @@ function User() {
             Previous
           </button>
 
-          {users.length > 0 && (
-            <span className="pagination-info">
-              Page {pagination.currentPage} of {pagination.totalPages}
-            </span>
-          )}
-
           <button
             className="pagination-btn next-btn"
             onClick={() => handlePaginationChange("next")}
@@ -317,6 +331,7 @@ function User() {
           </button>
         </div>
       </div>
+
 
       {/* Add User Modal */}
       <Modal show={showAddUserModal} onHide={handleCloseAddUserModal}>
@@ -354,7 +369,9 @@ function User() {
                 }}
                 required
               />
-              {errors.email && <div className="text-danger">{errors.email}</div>}
+              {errors.email && (
+                <div className="text-danger">{errors.email}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -416,7 +433,9 @@ function User() {
                 }}
                 required
               />
-              {errors.email && <div className="text-danger">{errors.email}</div>}
+              {errors.email && (
+                <div className="text-danger">{errors.email}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -446,7 +465,6 @@ function User() {
           </form>
         </Modal.Body>
       </Modal>
-
 
 
       {/* Delete Confirmation Modal */}
